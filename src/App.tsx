@@ -7,8 +7,9 @@ import Home from './components/home'
 import LogUp from './components/signup'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { UserProvider } from './components/userContext'
-import Profile from './profile'
+import Profile from './components/profile'
 import Signup from './components/signup'
+import Recipes from './components/recipes'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logup" element={<Signup />} />
         <Route path="/profile" element={<Profile></Profile>} />
+        <Route path='/recipes' element={<Recipes></Recipes>} />
       </Routes>
     </Router>    
     </>

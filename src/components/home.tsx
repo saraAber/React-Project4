@@ -30,7 +30,7 @@ const Home = () => {
                     ברוכים הבאים
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ marginBottom: 3 }}>
-                    התחברו או הירשמו כדי להמשיך 🎯
+                    התחברו או הירשמו כדי להמשיך לאזור האישי
                 </Typography>
 
                 {/* כפתור כניסה */}

@@ -4,7 +4,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "./userContext";
 
-// 🎯 נגדיר את סוג הנתונים שהמשתמש מזין בטופס
+//  נגדיר את סוג הנתונים שהמשתמש מזין בטופס
 interface SignupForm {
   UserName: string;
   Password: string;
@@ -40,8 +40,8 @@ const Signup= () => {
       }
     } catch (error: any) {
       if (error.response) {
-        setMsg("😜 אתה רשום כבר במאגר");
-        navigate("/profile"); 
+        setMsg("😜לחץ כאן לכניסה אתה כבר רשום במאגר");
+        //navigate("/profile"); 
       } else {
         setMsg("שגיאה בחיבור לשרת. נסה שוב מאוחר יותר.");
       }
@@ -77,8 +77,8 @@ const Signup= () => {
         </button>
 
         <br />
-        {msg === "😜 אתה רשום כבר במאגר" && (
-          <Link to="/login">להתחברות הקליקו כאן</Link>
+        {msg === "😜לחץ כאן לכניסה אתה כבר רשום במאגר" && (
+          <Link to="/login">לכניסה הקליקו כאן</Link>
         )}
       </form>
     </>
