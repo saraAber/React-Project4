@@ -10,17 +10,24 @@ import { UserProvider } from './components/userContext'
 import Profile from './components/profile'
 import Signup from './components/signup'
 import Recipes from './components/recipes'
+import AddRecipe from './components/addRecipe'
+import Recepies from './components/recipes'
+import ShowRecipes from './components/showRecipies'
 
 function App() {
   return (
     <UserProvider>
       <Router>
         <Routes>
+
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
           <Route path='/recipes' element={<Recipes />} />
+          <Route path='/addRecipe'element={<AddRecipe/>}/>
+          <Route path='/showRecepies'element={<ShowRecipes/>}/>
+          {/* <Route path="/" element={<Recepies />} /> */}
         </Routes>
       </Router>
     </UserProvider>

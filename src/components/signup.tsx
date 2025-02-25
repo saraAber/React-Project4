@@ -1,101 +1,9 @@
-// import { useState } from "react";
-// import { useForm } from "react-hook-form";
-// import axios from "axios";
-// import { Link, useNavigate } from "react-router-dom";
-// import { useUser } from "./userContext";
-
-// //  נגדיר את סוג הנתונים שהמשתמש מזין בטופס
-// interface SignupForm {
-//   UserName: string;
-//   Password: string;
-//   Name: string;
-//   Phone: string;
-//   Email: string;
-//   Tz: string;
-// }
-
-// const Signup= () => {
-//   const { register, handleSubmit, formState: { errors, isValid } } = useForm<SignupForm>({ mode: "onChange" });
-//   const [msg, setMsg] = useState<string>("");
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const { saveUser } = useUser(); // גישה לפונקציה ששומרת את המשתמש
-//   const navigate = useNavigate();
-
-//   const onSend = async (data: SignupForm) => {
-//     setLoading(true);
-//     setMsg("");
-
-//     try {
-//       const res = await axios.post(
-//         "http://localhost:8080/api/user/sighin",
-//         data,
-//         { headers: { "Content-Type": "application/json" } }
-//       );
-
-//       if (res.data && res.data.Id) {
-//         setMsg("ההרשמה בוצעה בהצלחה! 🎉");
-//         saveUser(res.data); // שמירת המשתמש ב-Context
-//         navigate("/recipes");
-//       } else {
-//         setMsg("שגיאה בהרשמה. נסה שוב.");
-//       }
-//     } catch (error: any) {
-//       if (error.response) {
-//         setMsg("😜לחץ כאן לכניסה אתה כבר רשום במאגר");
-//         //navigate("/profile"); 
-//       } else {
-//         setMsg("שגיאה בחיבור לשרת. נסה שוב מאוחר יותר.");
-//       }
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <>
-//       {msg && <>{msg}</>}
-//       <form onSubmit={handleSubmit(onSend)}>
-//         <input {...register("UserName", { required: "שדה חובה" })} placeholder="שם משתמש" />
-//         <p>{errors.UserName?.message}</p>
-
-//         <input {...register("Password", { required: "שדה חובה" })} placeholder="🔑סיסמה" type="password" />
-//         <p>{errors.Password?.message}</p>
-
-//         <input {...register("Name", { required: "שדה חובה" })} placeholder="😄שם מלא" />
-//         <p>{errors.Name?.message}</p>
-
-//         <input {...register("Phone", { required: "שדה חובה" })} placeholder="📞טלפון" />
-//         <p>{errors.Phone?.message}</p>
-
-//         <input {...register("Email", { required: "שדה חובה" })} placeholder="📧אימייל" />
-//         <p>{errors.Email?.message}</p>
-
-//         <input {...register("Tz", { required: "שדה חובה" })} placeholder="🪪תעודת זהות" />
-//         <p>{errors.Tz?.message}</p>
-
-//         <button type="submit" disabled={!isValid || loading}>
-//           {loading ? "ביצוע הרשמה..." : "הרשמה"}
-//         </button>
-
-//         <br />
-//         {msg === "😜לחץ כאן לכניסה אתה כבר רשום במאגר" && (
-//           <Link to="/login">לכניסה הקליקו כאן</Link>
-//         )}
-//       </form>
-//     </>
-//   );
-// };
-
-// export default Signup;
-
-
-
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Paper, Container } from "@mui/material";
+import { Box, Button, TextField, Typography, Paper } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useUser } from "./userContext";
-import backgroundImage from '../img/רקע1.jpg'; // ודא שהנתיב לתמונה נכון
+import axios from "axios";
 
 interface SignupForm {
   UserName: string;
@@ -110,7 +18,7 @@ const Signup = () => {
   const { register, handleSubmit, formState: { errors, isValid } } = useForm<SignupForm>({ mode: "onChange" });
   const [msg, setMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { saveUser } = useUser(); // גישה לפונקציה ששומרת את המשתמש
+  const { saveUser } = useUser();
   const navigate = useNavigate();
 
   const onSend = async (data: SignupForm) => {
@@ -144,6 +52,7 @@ const Signup = () => {
   };
 
   return (
+    <>
     <Box
       sx={{
         position: "fixed", // קיבוע ה-Box למסך
@@ -154,10 +63,8 @@ const Signup = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundImage: `url(${backgroundImage})`, // הגדרת התמונה כרקע
-        backgroundSize: "cover", // כיסוי מלא של המסך
-        backgroundPosition: "center", // מיקום מרכזי של התמונה
-        backgroundRepeat: "no-repeat", // ללא חזרה של התמונה
+        backgroundColor: "#ffffff", // רקע לבן נקי
+        overflow: "hidden", // מניעת גלילה
       }}
     >
       <Paper
@@ -257,6 +164,7 @@ const Signup = () => {
         </Box>
       </Paper>
     </Box>
+    </>
   );
 };
 
