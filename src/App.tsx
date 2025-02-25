@@ -13,17 +13,17 @@ import Recipes from './components/recipes'
 
 function App() {
   return (
-    <>
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/logup" element={<Signup />} />
-        <Route path="/profile" element={<Profile></Profile>} />
-        <Route path='/recipes' element={<Recipes></Recipes>} />
-      </Routes>
-    </Router>    
-    </>
+    <UserProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/logup" element={<Signup />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path='/recipes' element={<Recipes />} />
+        </Routes>
+      </Router>
+    </UserProvider>
   )
 }
 

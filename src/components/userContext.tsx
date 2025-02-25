@@ -18,7 +18,7 @@ interface UserContextType {
 }
 
 // 🎯 יצירת ה-Context עם ערכים ריקים כברירת מחדל
-const UserContext = createContext<UserContextType>({
+export const UserContext = createContext<UserContextType>({
   user: null,
   saveUser: () => {},
   logout: () => {},
