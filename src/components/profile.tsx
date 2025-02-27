@@ -1,4 +1,4 @@
-import { useUser } from "./userContext";
+import { useUser } from "../context/userContext";
 const Profile = () => {
 const { user, logout } = useUser();
 
