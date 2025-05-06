@@ -92,14 +92,11 @@
 
 
 
-
-
-
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Button, Typography, Box, Paper } from "@mui/material";
 
-const Home = () => {
+const Gggg = () => {
     const navigate = useNavigate();
 
     return (
@@ -115,6 +112,9 @@ const Home = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     overflow: "hidden", // מניעת גלילה
+                    backgroundImage: 'url("/רקע1.jpg")', // הוסף כאן את ה-URL של התמונה
+                    backgroundSize: "cover", // התמונה תתפרס על פני כל ה-Box
+                    backgroundPosition: "center", // מיקום התמונה במרכז
                 }}
             >
                 <Paper
@@ -179,4 +179,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Gggg;
