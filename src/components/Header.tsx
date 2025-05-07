@@ -1,7 +1,4 @@
-"use client"
-
 import type React from "react"
-
 import { useState, useContext } from "react"
 import {
   AppBar,
@@ -63,8 +60,27 @@ const Header = () => {
     <AppBar position="fixed" sx={{ backgroundColor: "black", boxShadow: 3 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Desktop Logo */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
+          {/* כפתור התחברות בצד שמאל */}
+          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" }, mr: 1 }}>
+            {!user && (
+              <Button
+                variant="contained"
+                onClick={handleLoginClick}
+                sx={{
+                  backgroundColor: "#b57e2c",
+                  color: "black",
+                  "&:hover": {
+                    backgroundColor: "#8c6321",
+                  },
+                }}
+              >
+                התחברות
+              </Button>
+            )}
+          </Box>
+
+          {/* לוגו בצד ימין */}
+          <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1, justifyContent: "flex-end" }}>
             <Link to="/" style={{ textDecoration: "none" }}>
               <img src="/רקע4.jpg" alt="לוגו" style={{ height: "60px", cursor: "pointer" }} />
             </Link>
@@ -123,25 +139,6 @@ const Header = () => {
             </Link>
           </Box>
 
-          {/* Desktop Navigation */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
-            <Button onClick={() => handleNavigate("/recipes")} sx={{ my: 2, color: "white", display: "block", mx: 1 }}>
-              מתכונים
-            </Button>
-            <Button
-              onClick={() => handleNavigate("/showRecepies")}
-              sx={{ my: 2, color: "white", display: "block", mx: 1 }}
-            >
-              צפייה במתכונים
-            </Button>
-            <Button
-              onClick={() => handleNavigate("/addRecipe")}
-              sx={{ my: 2, color: "white", display: "block", mx: 1 }}
-            >
-              הוספת מתכון
-            </Button>
-          </Box>
-
           {/* User Menu */}
           <Box sx={{ flexGrow: 0 }}>
             {user ? (
@@ -177,21 +174,7 @@ const Header = () => {
                   </MenuItem>
                 </Menu>
               </>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleLoginClick}
-                sx={{
-                  backgroundColor: "#b57e2c",
-                  color: "black",
-                  "&:hover": {
-                    backgroundColor: "#8c6321",
-                  },
-                }}
-              >
-                התחברות
-              </Button>
-            )}
+            ) : null}
           </Box>
         </Toolbar>
       </Container>

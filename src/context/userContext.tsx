@@ -36,8 +36,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // 🔹 פונקציה להתנתקות
   const logout = () => {
+    console.log("log out");
+    
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.clear(); // מנקה את הלוקאל סטורג'
   };
 
   return (

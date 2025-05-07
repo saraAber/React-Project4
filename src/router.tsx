@@ -23,10 +23,10 @@ export const Router = createBrowserRouter([
             { path: "/login", element: <Login /> },
             { path: "/logup", element: <Signup /> },
             { path: "/recipes", element: < Recipes /> },
-            {path:'/showRecepies',element:<ShowRecipes/>},
-            {path:'/addRecipe',element:<AddRecipe/>},
-            {path:'/editRecipe/:id', element:<EditRecipe/>},
-            {path:'/recipe/:id', element:<RecipeDetail/>},
+            { path: '/showRecepies', element: <ShowRecipes /> },
+            { path: '/addRecipe', element: <AddRecipe /> },
+            { path: '/editRecipe/:id', element: <EditRecipe /> },
+            { path: "/recipe/:id", element: <RecipeDetail /> }
         ]
 
     }
