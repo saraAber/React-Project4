@@ -60,7 +60,7 @@ interface Recipe {
     Difficulty: string;
     Description?: string;
     UserId: number;
-    CategoryId: number;
+    Categoryid: number;
     Ingridents?: Ingredient[];
     Instructions?: Instruction[];
 }
@@ -95,7 +95,7 @@ const ShowRecipes = () => {
             let filteredRecipes = res.data
 
             if (selectedCategory) {
-                filteredRecipes = filteredRecipes.filter((recipe: Recipe) => recipe.CategoryId === selectedCategory)
+                filteredRecipes = filteredRecipes.filter((recipe: Recipe) => recipe.Categoryid === selectedCategory)
             }
 
             if (selectedDifficulty) {
@@ -175,8 +175,8 @@ const ShowRecipes = () => {
         fetchRecipes()
     }, [])
 
-    const getCategoryName = (categoryId: number) => {
-        const category = categories.find((cat: { Id: number; Name: string }) => cat.Id === categoryId)
+    const getCategoryName = (categoryid: number) => {
+        const category = categories.find((cat: { Id: number; Name: string }) => cat.Id === categoryid)
         return category ? category.Name : "קטגוריה לא ידועה"
     }
 
@@ -369,7 +369,7 @@ const ShowRecipes = () => {
                                             <Chip icon={<FitnessCenterIcon />} label={recipe.Difficulty} size="small" variant="outlined" />
                                             <Chip
                                                 icon={<CategoryIcon />}
-                                                label={getCategoryName(recipe.CategoryId)}
+                                                label={getCategoryName(recipe.Categoryid)}
                                                 size="small"
                                                 variant="outlined"
                                             />
@@ -463,7 +463,7 @@ const ShowRecipes = () => {
                                     <CardActions sx={{ p: 2, pt: 0 }}>
                                         <Button
                                             variant="contained"
-                                            color="secondary"
+                                            color="#8c6321"
                                             startIcon={<DeleteIcon />}
                                             onClick={() => handleDelete(recipe.Id, recipe.UserId)}
                                             sx={{ mr: 1 }}
@@ -472,7 +472,7 @@ const ShowRecipes = () => {
                                         </Button>
                                         <Button
                                             variant="contained"
-                                            color="primary"
+                                            color="#8c6321"
                                             startIcon={<EditIcon />}
                                             onClick={() => handleEdit(recipe.Id, recipe.UserId)}
                                         >
@@ -480,7 +480,7 @@ const ShowRecipes = () => {
                                         </Button>
                                         <Button
                                             variant="contained"
-                                            color="default"
+                                            backgroundColor="#8c6321"
                                             onClick={() => navigate(`/recipe/${recipe.Id}`)} // ניווט לדף המתכון
                                         >
                                             צפייה במתכון

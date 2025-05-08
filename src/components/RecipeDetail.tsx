@@ -159,7 +159,7 @@ const RecipeDetail = () => {
                     <Button 
                         variant="contained" 
                         startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate('/recipes')}
+                        onClick={() => navigate('/showRecepies')}
                         sx={{
                             mt: 2,
                             backgroundColor: '#b57e2c',

@@ -344,6 +344,7 @@ const AddRecipe = () => {
           {error}
         </Alert>
       </Snackbar>
+      
     </Container>
   )
 }
