@@ -1,5 +1,4 @@
 
-
 import axios from "axios"
 import { useEffect, useState, useContext } from "react"
 import {
@@ -44,6 +43,8 @@ import CategoryIcon from "@mui/icons-material/Category"
 import PersonIcon from "@mui/icons-material/Person"
 import AddIcon from "@mui/icons-material/Add"
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu"
+import VisibilityIcon from "@mui/icons-material/Visibility"
+
 interface Ingredient {
     Name: string;
     Count?: number;
@@ -60,7 +61,7 @@ interface Recipe {
     Difficulty: string;
     Description?: string;
     UserId: number;
-    Categoryid: number;
+    CategoryId: number;
     Ingridents?: Ingredient[];
     Instructions?: Instruction[];
 }
@@ -69,7 +70,7 @@ const ShowRecipes = () => {
     const [recipes, setRecipes] = useState<Recipe[]>([])
     const [loading, setLoading] = useState(true)
     const { user } = useContext(UserContext)
-    const [categories, setCategories] = useState([])
+    const [categories, setCategories] = useState<{ Id: number; Name: string }[]>([])
     const [selectedCategory, setSelectedCategory] = useState<string>("")
     const [selectedDifficulty, setSelectedDifficulty] = useState<string>("")
     const [maxDuration, setMaxDuration] = useState<string>("")
@@ -79,10 +80,22 @@ const ShowRecipes = () => {
     const [recipeToDelete, setRecipeToDelete] = useState<{ Id: number } | null>(null)
     const [alertMessage, setAlertMessage] = useState<string>("")
     const [alertSeverity, setAlertSeverity] = useState<"success" | "error" | "info" | "warning">("info")
+
+    // חשוב: לטעון קודם את הקטגוריות ורק אז את המתכונים
+    useEffect(() => {
+        const loadData = async () => {
+            await fetchCategories(); // קודם טוען קטגוריות
+            await fetchRecipes();    // ואז טוען מתכונים
+        };
+
+        loadData();
+    }, []);
+
     const fetchCategories = async () => {
         try {
             const response = await axios.get("http://localhost:8080/api/category")
             setCategories(response.data)
+            console.log("Categories loaded:", response.data);
         } catch (error) {
             console.error("שגיאה בטעינת הקטגוריות", error)
             showAlert("שגיאה בטעינת הקטגוריות", "error")
@@ -95,7 +108,7 @@ const ShowRecipes = () => {
             let filteredRecipes = res.data
 
             if (selectedCategory) {
-                filteredRecipes = filteredRecipes.filter((recipe: Recipe) => recipe.Categoryid === selectedCategory)
+                filteredRecipes = filteredRecipes.filter((recipe: Recipe) => recipe.CategoryId === Number(selectedCategory))
             }
 
             if (selectedDifficulty) {
@@ -168,16 +181,23 @@ const ShowRecipes = () => {
         setSelectedDifficulty("")
         setMaxDuration("")
         setUserIdFilter("")
+        fetchRecipes() // טוען מחדש את כל המתכונים
     }
 
-    useEffect(() => {
-        fetchCategories()
-        fetchRecipes()
-    }, [])
-
+    // פונקציה משופרת לקבלת שם הקטגוריה
     const getCategoryName = (categoryid: number) => {
-        const category = categories.find((cat: { Id: number; Name: string }) => cat.Id === categoryid)
-        return category ? category.Name : "קטגוריה לא ידועה"
+        if (!categories || categories.length === 0) {
+            return "טוען קטגוריות...";
+        }
+
+        // המרה בטוחה למספר
+        const categoryIdNumber = Number(categoryid);
+
+        // מציאת הקטגוריה המתאימה
+        const category = categories.find(cat => Number(cat.Id) === categoryIdNumber);
+
+        // החזרת שם הקטגוריה או הודעת ברירת מחדל
+        return category ? category.Name : "קטגוריה לא מוכרת";
     }
 
     if (loading) {
@@ -191,11 +211,8 @@ const ShowRecipes = () => {
     return (
         <Box
             sx={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100vw",
-                height: "100vh",
+                width: "100%",
+                minHeight: "100vh",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
@@ -326,12 +343,13 @@ const ShowRecipes = () => {
                     {recipes.length > 0 ? (
                         recipes.map((recipe) => (
                             <Grid item key={recipe.Id} xs={12} sm={6} md={4}>
+                                {/* ויתור על height: "100%" והוספת minHeight במקום */}
                                 <Card
                                     sx={{
-                                        height: "100%",
                                         display: "flex",
                                         flexDirection: "column",
                                         borderRadius: 2,
+                                        minHeight: "450px", // הוספת גובה מינימום
                                         overflow: "hidden",
                                         transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                         "&:hover": {
@@ -369,13 +387,25 @@ const ShowRecipes = () => {
                                             <Chip icon={<FitnessCenterIcon />} label={recipe.Difficulty} size="small" variant="outlined" />
                                             <Chip
                                                 icon={<CategoryIcon />}
-                                                label={getCategoryName(recipe.Categoryid)}
+                                                label={getCategoryName(recipe.CategoryId)}
                                                 size="small"
                                                 variant="outlined"
                                             />
                                         </Box>
 
-                                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            gutterBottom
+                                            sx={{
+                                                // הגבלת גובה התיאור
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                display: "-webkit-box",
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: "vertical",
+                                            }}
+                                        >
                                             <strong>תיאור:</strong> {recipe.Description || "אין תיאור"}
                                         </Typography>
 
@@ -385,107 +415,92 @@ const ShowRecipes = () => {
                                                 מזהה משתמש: {recipe.UserId}
                                             </Typography>
                                         </Box>
-
-                                        {/* הצגת המרכיבים */}
-                                        {/* <List>
-                                            {recipe.Ingridents && recipe.Ingridents.length > 0 ? (
-                                                recipe.Ingridents.map((ingredient, index) => (
-                                                    <ListItem key={index} sx={{ py: 1 }}>
-                                                        <ListItemText
-                                                            primary={
-                                                                <Typography variant="body1">
-                                                                    <strong>{ingredient.Name}</strong>
-                                                                    {ingredient.Count && ingredient.Type
-                                                                        ? ` - ${ingredient.Count} ${ingredient.Type}`
-                                                                        : ingredient.Count
-                                                                            ? ` - ${ingredient.Count}`
-                                                                            : ""}
-                                                                </Typography>
-                                                            }
-                                                        />
-                                                    </ListItem>
-                                                ))
-                                            ) : (
-                                                <Typography variant="body2" color="text.secondary">אין מרכיבים זמינים</Typography>
-                                            )}
-                                        </List> */}
-
-                                        {/* הצגת הוראות ההכנה */}
-                                        {/* <Grid item xs={12} md={8}> 
-                                            <Paper elevation={2} sx={{ p: 3, height: "100%", width: '100%', maxWidth: 600 }}> 
-                                                <Typography variant="h5" component="h2" gutterBottom>
-                                                    אופן ההכנה
-                                                </Typography>
-                                                <Divider sx={{ mb: 2 }} />
-
-                                                <List>
-                                                    {recipe.Instructions && recipe.Instructions.length > 0 ? (
-                                                        recipe.Instructions.map((instruction, index) => (
-                                                            <ListItem key={index} alignItems="flex-start" sx={{ py: 1 }}>
-                                                                <ListItemText
-                                                                    primary={
-                                                                        <Box sx={{ display: "flex" }}>
-                                                                            <Typography
-                                                                                variant="body1"
-                                                                                component="span"
-                                                                                sx={{
-                                                                                    bgcolor: "#d81b60",
-                                                                                    color: "white",
-                                                                                    borderRadius: "50%",
-                                                                                    width: 24,
-                                                                                    height: 24,
-                                                                                    display: "flex",
-                                                                                    alignItems: "center",
-                                                                                    justifyContent: "center",
-                                                                                    mr: 2,
-                                                                                    flexShrink: 0,
-                                                                                }}
-                                                                            >
-                                                                                {index + 1}
-                                                                            </Typography>
-                                                                            <Typography variant="body1">{instruction.Name}</Typography>
-                                                                        </Box>
-                                                                    }
-                                                                />
-                                                            </ListItem>
-                                                        ))
-                                                    ) : (
-                                                        <Typography variant="body2" color="text.secondary">
-                                                            לא נמצאו הוראות הכנה למתכון זה
-                                                        </Typography>
-                                                    )}
-                                                </List>
-                                            </Paper>
-                                        </Grid> */}
-
                                     </CardContent>
 
-                                    <CardActions sx={{ p: 2, pt: 0 }}>
-                                        <Button
-                                            variant="contained"
-                                            color="#8c6321"
-                                            startIcon={<DeleteIcon />}
-                                            onClick={() => handleDelete(recipe.Id, recipe.UserId)}
-                                            sx={{ mr: 1 }}
-                                        >
-                                            מחק
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="#8c6321"
-                                            startIcon={<EditIcon />}
-                                            onClick={() => handleEdit(recipe.Id, recipe.UserId)}
-                                        >
-                                            ערוך
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            backgroundColor="#8c6321"
-                                            onClick={() => navigate(`/recipe/${recipe.Id}`)} // ניווט לדף המתכון
-                                        >
-                                            צפייה במתכון
-                                        </Button>
-                                    </CardActions>
+                                    <Box sx={{ mt: 'auto' }}> {/* פתרון חשוב: הזזת הכפתורים לתחתית */}
+                                        <Divider sx={{ mx: 2 }} />
+
+                                        {/* שימוש ב-ButtonGroup במקום ב-CardActions */}
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            p: 2,
+                                            gap: 1
+                                        }}>
+                                            {/* שורה ראשונה של כפתורים */}
+                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                                <Button
+                                                    variant="contained"
+                                                    fullWidth
+                                                    startIcon={<DeleteIcon />}
+                                                    onClick={() => handleDelete(recipe.Id, recipe.UserId)}
+                                                    sx={{
+                                                        bgcolor: '#000000',
+                                                        color: '#fff',
+                                                        borderRadius: '8px',
+                                                        transition: 'all 0.3s ease',
+                                                        boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+                                                        border: '1px solid transparent',
+                                                        '&:hover': {
+                                                            bgcolor: 'rgba(0, 0, 0, 0.9)',
+                                                            borderColor: '#b57e2c',
+                                                            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                                                            transform: 'translateY(-2px)'
+                                                        }
+                                                    }}
+                                                >
+                                                    מחק
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    startIcon={<EditIcon />}
+                                                    onClick={() => handleEdit(recipe.Id, recipe.UserId)}
+                                                    sx={{
+                                                        color: '#000000',
+                                                        borderColor: '#000000',
+                                                        borderRadius: '8px',
+                                                        transition: 'all 0.3s ease',
+                                                        '&:hover': {
+                                                            borderColor: '#b57e2c',
+                                                            color: '#b57e2c',
+                                                            bgcolor: 'rgba(181, 126, 44, 0.05)',
+                                                            transform: 'translateY(-2px)'
+                                                        }
+                                                    }}
+                                                >
+                                                    ערוך
+                                                </Button>
+                                            </Box>
+
+                                            {/* שורה שנייה - כפתור צפייה בגודל מלא */}
+                                            <Button
+                                                variant="contained"
+                                                fullWidth
+                                                startIcon={<VisibilityIcon />}
+                                                onClick={() => navigate(`/recipe/${recipe.Id}`)}
+                                                sx={{
+                                                    bgcolor: '#b57e2c',
+                                                    color: '#fff',
+                                                    borderRadius: '8px',
+                                                    p: '10px',
+                                                    fontWeight: 'bold',
+                                                    boxShadow: '0 4px 15px rgba(181, 126, 44, 0.3)',
+                                                    transition: 'all 0.3s ease',
+                                                    border: '1px solid transparent',
+                                                    '&:hover': {
+                                                        bgcolor: '#8c6321',
+                                                        boxShadow: '0 6px 20px rgba(181, 126, 44, 0.4)',
+                                                        transform: 'translateY(-2px)',
+                                                        borderColor: '#000'
+                                                    }
+                                                }}
+                                            >
+                                                צפייה במתכון
+                                            </Button>
+
+                                        </Box>
+                                    </Box>
                                 </Card>
                             </Grid>
                         ))
